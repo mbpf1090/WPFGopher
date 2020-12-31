@@ -4,7 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GopherClient"
-        xmlns:converter="clr-namespace:GopherClient.Converter" 
+        xmlns:converter="clr-namespace:GopherClient.Converter"
+        xmlns:views="clr-namespace:GopherClient.View"
+        xmlns:vm="clr-namespace:GopherClient.ViewModel"
         x:Class="GopherClient.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800"
@@ -14,41 +16,13 @@
         >
     <Window.Resources>
         <converter:TypeToSymbolConverter x:Key="TypeToSymbol"/>
-        
+
         <Style TargetType="{x:Type Window}">
             <!--SET CUSTOM FONT -->
             <Setter Property="FontFamily" Value="{StaticResource Cascadia}" />
             <Setter Property="FontSize" Value="16"/>
         </Style>
-        
-        <!-- Main Content Style -->
-        <Style x:Key="menuStyle" TargetType="{x:Type ListBox}">
-            <Setter Property="Background" Value="{StaticResource MainBG}"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-        <Style TargetType="{x:Type ListBoxItem}">
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="IsHitTestVisible" Value="False"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding Type}" Value="1">
-                    <Setter Property="Focusable" Value="True"/>
-                    <Setter Property="IsHitTestVisible" Value="True"/>
-                </DataTrigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="Background" Value="Red"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        
-        <!-- Content Line Style -->
-        <Style x:Key="listItemStyle"  TargetType="{x:Type TextBlock}">
-            <Setter Property="Foreground" Value="{StaticResource MainFG}"/>
-            <Setter Property="FontFamily" Value="Courier New" />
-            <Setter Property="FontSize" Value="16"/>
-        </Style>
-        
+
         <!-- Addressbar Style -->
         <Style x:Key="addressBarStyle" TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="5"/>
@@ -60,29 +34,6 @@
             <Setter Property="CaretBrush" Value="{StaticResource MainFG}"/>
             <Setter Property="FontFamily" Value="{StaticResource Cascadia}"/>
         </Style>
-
-        <!-- Menu Button-->
-        <Style x:Key="FocusVisual">
-            <Setter Property="Control.Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <SolidColorBrush x:Key="Button.Static.Background" Color="#222525"/>
-        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#222525"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
-        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#222525"/>
-        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
-        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#222525"/>
-        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
-        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
-        
-        
-        
     </Window.Resources>
     
     <Window.DataContext>
@@ -122,22 +73,19 @@
                     Command="{Binding GoBackCmd}"/>
         </Grid>
         <Rectangle Margin="10 -10 0 0" HorizontalAlignment="Left" Grid.Row="1" Stroke="#FFAF00" Height="1" Width="{Binding ActualWidth, ElementName=addressBarTextbox}" />
-        
-        <!-- Content -->
-        <ListBox Grid.Row="2" ItemsSource="{Binding Menu}"
-                 SelectedItem="{Binding SelectedLine}"
-                 Style="{StaticResource menuStyle}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Button Style="{StaticResource LineButton}"
-                            Command="{Binding DataContext.OpenLineCmd, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Type, Converter={StaticResource TypeToSymbol}}" Style="{StaticResource listItemStyle}"/>
-                            <TextBlock Text="{Binding UserDisplay}" Style="{StaticResource listItemStyle}"/>
-                        </StackPanel>
-                    </Button>
+
+        <!--Main Content Area-->
+        <ContentControl Content="{Binding CurrentContentView}"
+                        Grid.Row="2">
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type vm:MenuViewViewModel}">
+                    <views:MenuView/>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                <DataTemplate DataType="{x:Type vm:TextViewViewModel}">
+                    <views:TextView/>
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
+        
     </Grid>
 </Window>

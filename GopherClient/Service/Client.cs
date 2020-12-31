@@ -82,7 +82,7 @@ namespace GopherClient.Service
             return sb.ToString();
         }
 
-        public async Task<List<string>> GetTextContentAsync(GopherLine destination)
+        public async Task<string> GetTextContentAsync(GopherLine destination)
         {
             string rawContent;
             if (cache.ContainsKey(destination))
@@ -94,10 +94,10 @@ namespace GopherClient.Service
                 rawContent = await VisitAsync(destination);
                 cache.Add(destination, rawContent);
             }
-            List<string> textContent = rawContent.Split('\n').ToList();
+            //List<string> textContent = rawContent.Split('\n').ToList();
             stack.Push(currentSite);
             currentSite = destination;
-            return textContent;
+            return rawContent;
         }
 
         public async Task<string> GetMenuContentAsync(GopherLine destination)

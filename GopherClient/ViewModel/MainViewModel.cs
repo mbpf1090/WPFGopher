@@ -11,19 +11,18 @@ namespace GopherClient.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly Client client;
-        public GopherLine SelectedLine { get; set; }
-
-        private List<GopherLine> _menu;
-        public List<GopherLine> Menu 
-        {
-            get => _menu; 
+        private ViewModelBase _currentContentView;
+        public ViewModelBase CurrentContentView
+        { 
+            get => _currentContentView;
             set
             {
-                _menu = value;
+                _currentContentView = value;
                 RaisePropertyChanged();
-            } 
+            }
         }
+
+        private readonly Client client;
 
         private string _address;
         public string Address
@@ -45,7 +44,6 @@ namespace GopherClient.ViewModel
         {
             if (IsInDesignMode)
             {
-                GenerateData();
                 Address = "gopher.floodgap.com";
             }
             else
@@ -53,18 +51,25 @@ namespace GopherClient.ViewModel
                 client = new Client();
             }
 
-            OpenLineCmd = new RelayCommand<GopherLine>((line) => OpenLine(line));
+            CurrentContentView = new MenuViewViewModel();
+
             OpenAddressCmd = new RelayCommand(OpenAddress, CanOpenAddress);
             GoBackCmd = new RelayCommand(GoBack, client.CanGoBack);
             Address = "gopher.floodgap.com";
+
+            //Setup Messenger
+            MessengerInstance.Register<GopherLine>(this, OpenLine);
 
         }
 
         private void GoBack()
         {
             var rawContent = client.GoBack();
-            Menu = Parser.Parse(rawContent);
             Address = client.currentSite.Host + client.currentSite.Selector;
+            MenuViewViewModel menuViewViewModel = new MenuViewViewModel();
+            menuViewViewModel.Menu = Parser.Parse(rawContent);
+            CurrentContentView = menuViewViewModel;
+            //((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
         }
 
         private async void OpenAddress()
@@ -74,8 +79,7 @@ namespace GopherClient.ViewModel
                 string[] checkedAddress = Parser.CheckAddress(Address);
                 GopherLine destination = new GopherLine("1", "", checkedAddress[3], checkedAddress[1], checkedAddress[2].Equals("") ? "70" : checkedAddress[2]);
                 var rawContent = await client.GetMenuContentAsync(destination);
-                Menu = Parser.Parse(rawContent);
-
+                ((MenuViewViewModel) CurrentContentView).Menu = Parser.Parse(rawContent);
             }
         }
 
@@ -89,34 +93,39 @@ namespace GopherClient.ViewModel
         private async void OpenLine(GopherLine gopherLine)
         {
             client.CancelRequest();
-            try
+            switch (gopherLine.Type)
             {
-                var rawContent = await client.GetMenuContentAsync(gopherLine);
-                Menu = Parser.Parse(rawContent);
-                Address = client.currentSite.Host + client.currentSite.Selector;
-
-            } catch (TaskCanceledException)
-            {
-                return;
-            }
-        }
-
-        private void GenerateData()
-        {
-            Menu = new List<GopherLine>()
+                case "1":
+                    try
                     {
-                        new GopherLine("i", "Welcome to my gopher hole!", "", "", "70"),
-                        new GopherLine("i", "", "", "", "70"),
-                        new GopherLine("0", "About Me", "", "", "70"),
-                        new GopherLine("i", "", "", "", "70"),
-                        new GopherLine("i", "Here are some books I I've read", "", "", "70"),
-                        new GopherLine("1", "Books", "", "", "70"),
-                        new GopherLine("i", "", "", "", "70"),
-                        new GopherLine("i", "I also like to write about movies", "", "", "70"),
-                        new GopherLine("1", "Movies", "", "", "70"),
-                        new GopherLine("i", "I collect knitting projects", "", "", "70"),
-                        new GopherLine("1", "Knitting projects", "", "", "70")
-                    };
+                        var rawContent = await client.GetMenuContentAsync(gopherLine);
+                        Address = client.currentSite.Host + client.currentSite.Selector;
+                        ((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        return;
+                    }
+                    break;
+                case "0":
+                    try
+                    {
+                        
+                        var rawContent = await client.GetTextContentAsync(gopherLine);
+                        Address = client.currentSite.Host + client.currentSite.Selector;
+                        TextViewViewModel textViewViewModel = new TextViewViewModel();
+                        textViewViewModel.TextContent = rawContent;
+                        CurrentContentView = textViewViewModel;
+                        //((TextViewViewModel)CurrentContentView).TextContent = rawContent;
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        return;
+                    }
+                    break;
+                default:
+                    return;
+            }
         }
     }
 }
