@@ -7,10 +7,10 @@
              xmlns:converter="clr-namespace:GopherClient.Converter" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <UserControl.Resources>
         <converter:TypeToSymbolConverter x:Key="TypeToSymbol"/>
-        
+
         <Style x:Key="menuStyle" TargetType="{x:Type ListBox}">
             <Setter Property="Background" Value="{StaticResource MainBG}"/>
             <Setter Property="Margin" Value="5"/>
@@ -41,12 +41,15 @@
             <Setter Property="FontFamily" Value="Courier New" />
             <Setter Property="FontSize" Value="16"/>
         </Style>
+       
     </UserControl.Resources>
 
     <Grid>
         <ListBox ItemsSource="{Binding Menu}"
                  SelectedItem="{Binding SelectedLine}"
-                 Style="{StaticResource menuStyle}">
+                 Style="{StaticResource menuStyle}"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Button Style="{StaticResource LineButton}"
