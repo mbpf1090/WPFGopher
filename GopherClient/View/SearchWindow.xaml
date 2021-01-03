@@ -1,0 +1,51 @@
+﻿<Window x:Class="GopherClient.View.SearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GopherClient.View"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        Title="SearchWindow" Height="200" Width="300"
+        x:Name="SW">
+    <Window.DataContext>
+        <Binding Path="Search" Source="{StaticResource Locator}"/>
+    </Window.DataContext>
+    <Grid Background="{StaticResource MainBG}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0 30 0 0">
+            <TextBox Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
+                     VerticalAlignment="Center"
+                     Style="{StaticResource textBoxMainStyle}"
+                     x:Name="searchBox"/>
+            <Rectangle Margin="10 -10 10 0" 
+                       HorizontalAlignment="Left" 
+                       Stroke="{StaticResource MainFG}" 
+                       Height="1" 
+                       Width="{Binding ActualWidth, ElementName=searchBox}" />
+
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" 
+                    Grid.Row="1" HorizontalAlignment="Center"
+                    VerticalAlignment="Center" 
+                    Margin="10">
+            <Button
+                Content="OK"
+                Margin="10" 
+                Command="{Binding OkCmd}"
+                CommandParameter="{Binding ElementName=SW}"
+                Style="{StaticResource AddressBarBtn}"/>
+            <Button 
+                Content="Cancel" 
+                Margin="10"
+                Command="{Binding CancelCmd}"
+                CommandParameter="{Binding ElementName=SW}"
+                Style="{StaticResource AddressBarBtn}"/>
+
+        </StackPanel>
+    </Grid>
+</Window>

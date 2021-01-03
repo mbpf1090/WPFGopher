@@ -22,18 +22,6 @@
             <Setter Property="FontFamily" Value="{StaticResource Cascadia}" />
             <Setter Property="FontSize" Value="16"/>
         </Style>
-
-        <!-- Addressbar Style -->
-        <Style x:Key="addressBarStyle" TargetType="{x:Type TextBox}">
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Background" Value="{StaticResource MainBG}"/>
-            <Setter Property="Foreground" Value="{StaticResource MainFG}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="CaretBrush" Value="{StaticResource MainFG}"/>
-            <Setter Property="FontFamily" Value="{StaticResource Cascadia}"/>
-        </Style>
     </Window.Resources>
     
     <Window.DataContext>
@@ -60,7 +48,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox x:Name="addressBarTextbox" 
-                     Style="{StaticResource addressBarStyle}"
+                     Style="{StaticResource textBoxMainStyle}"
                      Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
                      />
             <Button Grid.Column="1" 

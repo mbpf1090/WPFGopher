@@ -20,11 +20,18 @@
             <Setter Property="Focusable" Value="False"/>
             <Setter Property="IsHitTestVisible" Value="False"/>
             <Style.Triggers>
+                <!-- Menu -->
                 <DataTrigger Binding="{Binding Type}" Value="1">
                     <Setter Property="Focusable" Value="True"/>
                     <Setter Property="IsHitTestVisible" Value="True"/>
                 </DataTrigger>
+                <!-- Text -->
                 <DataTrigger Binding="{Binding Type}" Value="0">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
+                <!-- Search -->
+                <DataTrigger Binding="{Binding Type}" Value="7">
                     <Setter Property="Focusable" Value="True"/>
                     <Setter Property="IsHitTestVisible" Value="True"/>
                 </DataTrigger>

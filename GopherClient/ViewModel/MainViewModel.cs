@@ -2,6 +2,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GopherClient.Model;
 using GopherClient.Service;
+using GopherClient.View;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +12,9 @@ namespace GopherClient.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        private readonly Client client;
+        private GopherLine searchLine;
+
         private ViewModelBase _currentContentView;
         public ViewModelBase CurrentContentView
         { 
@@ -22,7 +26,6 @@ namespace GopherClient.ViewModel
             }
         }
 
-        private readonly Client client;
 
         private string _address;
         public string Address
@@ -59,6 +62,25 @@ namespace GopherClient.ViewModel
 
             //Setup Messenger
             MessengerInstance.Register<GopherLine>(this, OpenLine);
+            MessengerInstance.Register<string>(this, GetSearchTerm);
+
+        }
+
+        private async void GetSearchTerm(string s)
+        {
+            Debug.WriteLine(s);
+            searchLine.Selector += $"\t{s}";
+            try
+            {
+                var rawContent = await client.GetMenuContentAsync(searchLine);
+                Address = client.currentSite.Host + client.currentSite.Selector;
+                ((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
+            }
+            catch (TaskCanceledException)
+            {
+                return;
+            }
+
 
         }
 
@@ -69,11 +91,11 @@ namespace GopherClient.ViewModel
             MenuViewViewModel menuViewViewModel = new MenuViewViewModel();
             menuViewViewModel.Menu = Parser.Parse(rawContent);
             CurrentContentView = menuViewViewModel;
-            //((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
         }
 
         private async void OpenAddress()
         {
+            
             if (Address != null)
             {
                 string[] checkedAddress = Parser.CheckAddress(Address);
@@ -81,6 +103,7 @@ namespace GopherClient.ViewModel
                 var rawContent = await client.GetMenuContentAsync(destination);
                 ((MenuViewViewModel) CurrentContentView).Menu = Parser.Parse(rawContent);
             }
+            
         }
 
         private bool CanOpenAddress()
@@ -122,6 +145,11 @@ namespace GopherClient.ViewModel
                     {
                         return;
                     }
+                    break;
+                case "7":
+                    searchLine = gopherLine;
+                    SearchWindow searchWindow = new SearchWindow();
+                    searchWindow.ShowDialog();
                     break;
                 default:
                     return;

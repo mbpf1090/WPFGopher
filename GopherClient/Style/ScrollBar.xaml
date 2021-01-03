@@ -25,7 +25,7 @@
             </Setter>
         </Style>
 
-    <Style x:Key="ViewerScrollBar" TargetType="{x:Type ScrollBar}">
+    <Style  TargetType="{x:Type ScrollBar}">
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
         <Setter Property="Stylus.IsFlicksEnabled" Value="false"/>
 

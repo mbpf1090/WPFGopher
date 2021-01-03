@@ -19,6 +19,8 @@ namespace GopherClient.Converter
                     return "txt \t";
                 case "1":
                     return "--> \t";
+                case "7":
+                    return "?   \t";
                 default:
                     return "    \t";
             }
