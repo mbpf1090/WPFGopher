@@ -123,7 +123,15 @@ namespace GopherClient.ViewModel
                     {
                         var rawContent = await client.GetMenuContentAsync(gopherLine);
                         Address = client.currentSite.Host + client.currentSite.Selector;
-                        ((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
+                        try
+                        {
+                            ((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
+                        }
+                        catch (ArgumentOutOfRangeException ex)
+                        {
+                            Debug.WriteLine(ex.Message);
+                            return;
+                        }
                     }
                     catch (TaskCanceledException)
                     {
