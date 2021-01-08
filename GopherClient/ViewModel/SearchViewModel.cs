@@ -43,7 +43,7 @@ namespace GopherClient.ViewModel
             Debug.WriteLine("Ök");
             if (SearchTerm != null && !SearchTerm.Equals(""))
             {
-                MessengerInstance.Send<string>(SearchTerm);
+                MessengerInstance.Send<string>(SearchTerm.Trim());
                 window.Close();
             }
         }

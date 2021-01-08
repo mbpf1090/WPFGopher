@@ -21,6 +21,8 @@ namespace GopherClient.Converter
                     return "--> \t";
                 case "7":
                     return "?   \t";
+                case "I":
+                    return "img \t";
                 default:
                     return "    \t";
             }

@@ -149,6 +149,7 @@ namespace GopherClient.ViewModel
                 case "7":
                     searchLine = gopherLine;
                     SearchWindow searchWindow = new SearchWindow();
+                    searchWindow.Owner = App.Current.MainWindow;
                     searchWindow.ShowDialog();
                     break;
                 default:

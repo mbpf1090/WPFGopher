@@ -6,17 +6,21 @@
         xmlns:local="clr-namespace:GopherClient.View"
         mc:Ignorable="d"
         WindowStyle="None"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterOwner"
         Title="SearchWindow" Height="200" Width="300"
         x:Name="SW">
+    
     <Window.DataContext>
         <Binding Path="Search" Source="{StaticResource Locator}"/>
     </Window.DataContext>
+    
     <Grid Background="{StaticResource MainBG}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        
+        <!-- Textfield -->
         <StackPanel Margin="0 30 0 0">
             <TextBox Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
                      VerticalAlignment="Center"
@@ -29,6 +33,8 @@
                        Width="{Binding ActualWidth, ElementName=searchBox}" />
 
         </StackPanel>
+        
+        <!-- Buttons -->
         <StackPanel Orientation="Horizontal" 
                     Grid.Row="1" HorizontalAlignment="Center"
                     VerticalAlignment="Center" 
