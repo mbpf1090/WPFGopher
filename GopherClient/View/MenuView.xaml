@@ -38,6 +38,7 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderThickness" Value="0"/>
                     <Setter Property="Background" Value="Red"/>
+                    <Setter Property="IsSelected" Value="True"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -48,7 +49,6 @@
             <Setter Property="FontFamily" Value="Courier New" />
             <Setter Property="FontSize" Value="16"/>
         </Style>
-       
     </UserControl.Resources>
 
     <Grid>

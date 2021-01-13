@@ -22,10 +22,10 @@ namespace GopherClient.Service
                 }
                 List<string> item = line.Split('\t').ToList();
 
-                // Catch invalid gopherline
+                // Ignore invalid gopherline
                 if (item.Count < 4)
                     continue;
-                    //throw new ArgumentOutOfRangeException();
+                    
 
                 GopherLine gopherLine = new GopherLine(item[0].Substring(0, 1),
                     item[0].Substring(1),

@@ -24,7 +24,16 @@ namespace GopherClient.ViewModel
             }
         }
 
-        public GopherLine SelectedLine { get; set; }
+        private GopherLine _selectedLine;
+        public GopherLine SelectedLine
+        {
+            get => _selectedLine;
+            set
+            {
+                _selectedLine = value;
+                SelectionChanged(_selectedLine);
+            }
+        }
 
         public RelayCommand<GopherLine> OpenLineCmd { get; set; }
 
@@ -39,6 +48,11 @@ namespace GopherClient.ViewModel
         {
             Debug.WriteLine(line.Host);
             MessengerInstance.Send<GopherLine>(line);
+        }
+
+        private void SelectionChanged(GopherLine line)
+        {
+            MessengerInstance.Send<GopherLine>(line, 1);
         }
     }
 }

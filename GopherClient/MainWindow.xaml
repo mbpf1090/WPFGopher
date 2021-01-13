@@ -38,6 +38,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <!-- Addressbar -->
@@ -75,5 +76,23 @@
             </ContentControl.Resources>
         </ContentControl>
         
+        <!-- Status bar -->
+        <Border Grid.Row="3" BorderBrush="{StaticResource MainHL}" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                </Grid.ColumnDefinitions>
+                <!-- Info Label-->
+                <Label Content="{Binding InfoLabel}" Foreground="{StaticResource MainFG}"/>
+                <ProgressBar Grid.Column="1"
+                             Height="20"
+                             Background="{StaticResource MainBG}"
+                             Foreground="{StaticResource MainFG}"
+                             BorderBrush="{StaticResource MainHL}"
+                             BorderThickness="1"
+                             Value="{Binding Progress}"/>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

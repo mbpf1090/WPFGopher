@@ -38,6 +38,19 @@ namespace GopherClient.ViewModel
             }
         }
 
+        private string _infoLabel;
+        public string InfoLabel
+        {
+            get => _infoLabel;
+            set
+            {
+                _infoLabel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        public int Progress { get; set; }
 
         public RelayCommand<GopherLine> OpenLineCmd { get; set; }
         public RelayCommand OpenAddressCmd { get; set; }
@@ -63,7 +76,14 @@ namespace GopherClient.ViewModel
             //Setup Messenger
             MessengerInstance.Register<GopherLine>(this, OpenLine);
             MessengerInstance.Register<string>(this, GetSearchTerm);
+            MessengerInstance.Register<GopherLine>(this, 1, UpdateInfoLabel);
 
+        }
+
+        private void UpdateInfoLabel(GopherLine line)
+        {
+            if (line != null)
+                InfoLabel = $"{line.Host}{line.Selector}:{line.Port}";
         }
 
         private async void GetSearchTerm(string s)
@@ -115,7 +135,7 @@ namespace GopherClient.ViewModel
 
         private async void OpenLine(GopherLine gopherLine)
         {
-            client.CancelRequest();
+            
             switch (gopherLine.Type)
             {
                 case "1":
@@ -133,8 +153,9 @@ namespace GopherClient.ViewModel
                             return;
                         }
                     }
-                    catch (TaskCanceledException)
+                    catch (OperationCanceledException)
                     {
+                        Debug.WriteLine("Catch MainViewModel OpenLine");
                         return;
                     }
                     break;
@@ -147,9 +168,9 @@ namespace GopherClient.ViewModel
                         TextViewViewModel textViewViewModel = new TextViewViewModel();
                         textViewViewModel.TextContent = rawContent;
                         CurrentContentView = textViewViewModel;
-                        //((TextViewViewModel)CurrentContentView).TextContent = rawContent;
                     }
-                    catch (TaskCanceledException)
+                    catch (OperationCanceledException
+                    )
                     {
                         return;
                     }
