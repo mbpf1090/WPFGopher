@@ -16,13 +16,13 @@ namespace GopherClient.Converter
             switch (type)
             {
                 case "0":
-                    return "txt \t";
+                    return "\uf15c \t";
                 case "1":
-                    return "--> \t";
+                    return "\uf178 \t";
                 case "7":
-                    return "?   \t";
+                    return "\uf002 \t";
                 case "I":
-                    return "img \t";
+                    return "\uf1c5 \t";
                 default:
                     return "    \t";
             }

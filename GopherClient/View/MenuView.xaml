@@ -63,8 +63,8 @@
                             Command="{Binding DataContext.OpenLineCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
                             CommandParameter="{Binding}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Type, Converter={StaticResource TypeToSymbol}}" Style="{StaticResource listItemStyle}"/>
-                            <TextBlock Text="{Binding UserDisplay}" Style="{StaticResource listItemStyle}"/>
+                            <TextBlock Text="{Binding Type, Converter={StaticResource TypeToSymbol}}" Style="{StaticResource listItemStyle}" FontFamily="{StaticResource MonoidRegular}"/>
+                            <TextBlock Text="{Binding UserDisplay}" Style="{StaticResource listItemStyle}" FontFamily="{StaticResource MonoidRegular}"/>
                         </StackPanel>
                     </Button>
                 </DataTemplate>

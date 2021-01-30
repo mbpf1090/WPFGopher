@@ -19,7 +19,7 @@
 
         <Style TargetType="{x:Type Window}">
             <!--SET CUSTOM FONT -->
-            <Setter Property="FontFamily" Value="{StaticResource Cascadia}" />
+            <Setter Property="FontFamily" Value="{StaticResource MonoidRegular}" />
             <Setter Property="FontSize" Value="16"/>
         </Style>
     </Window.Resources>

@@ -14,7 +14,7 @@
             <TextBlock Text="{Binding TextContent}"
                        Background="{StaticResource MainBG}"
                        Foreground="{StaticResource MainFG}"
-                       FontFamily="{StaticResource Cascadia}"
+                       FontFamily="{StaticResource MonoidRegular}"
                        FontSize="16"
                        Margin="15"/>
             
