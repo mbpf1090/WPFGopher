@@ -218,8 +218,11 @@ namespace GopherClient.ViewModel
                     break;
                 // HTML link
                 case "h":
+                    // Remove leading "URL:"
                     string url = gopherLine.Selector.Remove(0, 4);
-                    Process.Start(url);
+                    // Basic URL checking
+                    if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                        Process.Start(url);
                     break;
                 default:
                     return;
