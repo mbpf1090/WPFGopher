@@ -216,6 +216,11 @@ namespace GopherClient.ViewModel
                     };
                     searchWindow.ShowDialog();
                     break;
+                // HTML link
+                case "h":
+                    string url = gopherLine.Selector.Remove(0, 4);
+                    Process.Start(url);
+                    break;
                 default:
                     return;
             }

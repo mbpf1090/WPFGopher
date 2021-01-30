@@ -45,6 +45,9 @@ namespace GopherClient.Converter
                 // Image file
                 case "I":
                     return "\uf1c5 \t";
+                // HTML
+                case "h":
+                    return "\uf13b \t";
                 default:
                     return "    \t";
             }

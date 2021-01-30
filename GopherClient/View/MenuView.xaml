@@ -35,6 +35,11 @@
                     <Setter Property="Focusable" Value="True"/>
                     <Setter Property="IsHitTestVisible" Value="True"/>
                 </DataTrigger>
+                <!-- HTML link-->
+                <DataTrigger Binding="{Binding Type}" Value="h">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderThickness" Value="0"/>
                     <Setter Property="Background" Value="Red"/>
