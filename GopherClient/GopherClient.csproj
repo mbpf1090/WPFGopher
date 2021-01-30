@@ -185,7 +185,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="Fonts\Caskaydia Cove Regular Nerd Font Complete Mono Windows Compatible.otf" />
     <Resource Include="Fonts\Monoid.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

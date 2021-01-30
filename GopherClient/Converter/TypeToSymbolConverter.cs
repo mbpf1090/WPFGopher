@@ -15,12 +15,34 @@ namespace GopherClient.Converter
             string type = (string)value;
             switch (type)
             {
+                // Text file
                 case "0":
                     return "\uf15c \t";
+                // Submenu
                 case "1":
                     return "\uf178 \t";
+                // Error code
+                case "3":
+                    return "\uf6f7 \t";
+                // BinHex file
+                case "4":
+                    return "\uf179 \t";
+                // DOS file
+                case "5":
+                    return "\ue629 \t";
+                // Text search
                 case "7":
                     return "\uf002 \t";
+                // Telnet
+                case "8":
+                    return "\uf6ff \t";
+                //Binary file
+                case "9":
+                    return "\uf471 \t";
+                // GIF
+                case "g":
+                    return "\uf0fb \t";
+                // Image file
                 case "I":
                     return "\uf1c5 \t";
                 default:
