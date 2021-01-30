@@ -91,6 +91,7 @@
                              Foreground="{StaticResource MainFG}"
                              BorderBrush="{StaticResource MainHL}"
                              BorderThickness="1"
+                             Opacity="0.7"
                              Value="{Binding Progress}"/>
             </Grid>
         </Border>

@@ -15,6 +15,7 @@ namespace GopherClient.ViewModel
         private readonly Client client;
         private GopherLine searchLine;
 
+        #region Properties
         private ViewModelBase _currentContentView;
         public ViewModelBase CurrentContentView
         { 
@@ -50,11 +51,23 @@ namespace GopherClient.ViewModel
         }
 
 
-        public int Progress { get; set; }
+        private int _progress;
+        public int Progress
+        {
+            get => _progress;
+            set
+            {
+                _progress = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         public RelayCommand<GopherLine> OpenLineCmd { get; set; }
         public RelayCommand OpenAddressCmd { get; set; }
         public RelayCommand GoBackCmd { get; set; }
+        #endregion
+
 
         public MainViewModel()
         {
@@ -80,6 +93,7 @@ namespace GopherClient.ViewModel
 
         }
 
+        #region Methods
         private void UpdateInfoLabel(GopherLine line)
         {
             if (line != null)
@@ -92,7 +106,13 @@ namespace GopherClient.ViewModel
             searchLine.Selector += $"\t{s}";
             try
             {
-                var rawContent = await client.GetMenuContentAsync(searchLine);
+                ResetProgressBar();
+                var progress = new Progress<int>((value) =>
+                {
+                    Progress = value;
+                });
+
+                var rawContent = await client.GetMenuContentAsync(searchLine, progress);
                 Address = client.currentSite.Host + client.currentSite.Selector;
                 ((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
             }
@@ -118,9 +138,15 @@ namespace GopherClient.ViewModel
             
             if (Address != null)
             {
+                ResetProgressBar();
+                var progress = new Progress<int>((value) =>
+                {
+                    Progress = value;
+                });
+
                 string[] checkedAddress = Parser.CheckAddress(Address);
                 GopherLine destination = new GopherLine("1", "", checkedAddress[3], checkedAddress[1], checkedAddress[2].Equals("") ? "70" : checkedAddress[2]);
-                var rawContent = await client.GetMenuContentAsync(destination);
+                var rawContent = await client.GetMenuContentAsync(destination, progress);
                 ((MenuViewViewModel) CurrentContentView).Menu = Parser.Parse(rawContent);
             }
             
@@ -128,20 +154,24 @@ namespace GopherClient.ViewModel
 
         private bool CanOpenAddress()
         {
-            if (Address.Equals(""))
-                return false;
-            return true;
+            return !string.IsNullOrWhiteSpace(Address);
         }
 
         private async void OpenLine(GopherLine gopherLine)
         {
-            
+            ResetProgressBar();
+            var progress = new Progress<int>((value) =>
+            {
+                Progress = value;
+            });
+
             switch (gopherLine.Type)
             {
+                // Submenu
                 case "1":
                     try
                     {
-                        var rawContent = await client.GetMenuContentAsync(gopherLine);
+                        var rawContent = await client.GetMenuContentAsync(gopherLine, progress);
                         Address = client.currentSite.Host + client.currentSite.Selector;
                         try
                         {
@@ -159,31 +189,42 @@ namespace GopherClient.ViewModel
                         return;
                     }
                     break;
+                // Text file
                 case "0":
                     try
                     {
                         
                         var rawContent = await client.GetTextContentAsync(gopherLine);
                         Address = client.currentSite.Host + client.currentSite.Selector;
-                        TextViewViewModel textViewViewModel = new TextViewViewModel();
-                        textViewViewModel.TextContent = rawContent;
+                        TextViewViewModel textViewViewModel = new TextViewViewModel
+                        {
+                            TextContent = rawContent
+                        };
                         CurrentContentView = textViewViewModel;
                     }
-                    catch (OperationCanceledException
-                    )
+                    catch (OperationCanceledException)
                     {
                         return;
                     }
                     break;
+                // Search
                 case "7":
                     searchLine = gopherLine;
-                    SearchWindow searchWindow = new SearchWindow();
-                    searchWindow.Owner = App.Current.MainWindow;
+                    SearchWindow searchWindow = new SearchWindow
+                    {
+                        Owner = App.Current.MainWindow
+                    };
                     searchWindow.ShowDialog();
                     break;
                 default:
                     return;
             }
         }
+
+        private void ResetProgressBar()
+        {
+            Progress = 0;
+        }
+        #endregion
     }
 }

@@ -165,14 +165,17 @@ namespace GopherClient.Service
             return rawContent;
         }
 
-        public async Task<string> GetMenuContentAsync(GopherLine destination)
+        public async Task<string> GetMenuContentAsync(GopherLine destination, IProgress<int> progress)
         {
+            progress.Report(25);
             string rawContent;
             if (cache.ContainsKey(destination))
             {
                 rawContent = cache[destination];
                 stack.Push(currentSite);
                 currentSite = destination;
+
+                progress.Report(100);
 
                 return rawContent;
             }
@@ -184,6 +187,8 @@ namespace GopherClient.Service
                     tokenSource.Cancel();
                 }
 
+                progress.Report(50);
+
                 getDataTask = Task.Run(() => Visit(destination, cancellationToken));
                 rawContent = await getDataTask;
                 if (getDataTask.IsCanceled)
@@ -191,6 +196,8 @@ namespace GopherClient.Service
                 cache.Add(destination, rawContent);
                 stack.Push(currentSite);
                 currentSite = destination;
+
+                progress.Report(100);
 
                 return rawContent;
             } 
