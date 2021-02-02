@@ -44,6 +44,7 @@ namespace GopherClient.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<SearchViewModel>();
+            SimpleIoc.Default.Register<ImageViewViewModel>();
         }
 
         public MainViewModel Main
@@ -62,9 +63,16 @@ namespace GopherClient.ViewModel
             }
         }
 
+        public ImageViewViewModel ImageViewViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ImageViewViewModel>();
+            }
+        }
+
         public static void Cleanup()
         {
-            // TODO Clear the ViewModels
         }
     }
 }

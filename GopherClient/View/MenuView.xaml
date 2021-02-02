@@ -35,8 +35,13 @@
                     <Setter Property="Focusable" Value="True"/>
                     <Setter Property="IsHitTestVisible" Value="True"/>
                 </DataTrigger>
-                <!-- HTML link-->
+                <!-- HTML link -->
                 <DataTrigger Binding="{Binding Type}" Value="h">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
+                <!-- Image link -->
+                <DataTrigger Binding="{Binding Type}" Value="I">
                     <Setter Property="Focusable" Value="True"/>
                     <Setter Property="IsHitTestVisible" Value="True"/>
                 </DataTrigger>

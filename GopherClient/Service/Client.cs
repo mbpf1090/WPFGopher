@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GopherClient.Service
 {
@@ -32,6 +35,47 @@ namespace GopherClient.Service
 
         }
 
+        public ImageSource GetImage(GopherLine line)
+        {
+            TcpClient client = new TcpClient();
+
+            data = Encoding.UTF8.GetBytes($"{line.Selector}\n\r");
+
+            try
+            {
+                client.Connect(line.Host, int.Parse(line.Port));
+                NetworkStream stream = client.GetStream();
+
+                stream.Write(data, 0, data.Length);
+
+                // Copy to memory
+                var memoryStream = new MemoryStream();
+                stream.CopyTo(memoryStream);
+                memoryStream.Position = 0;
+
+                // Create BitmapImage
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.StreamSource = memoryStream;
+                bitmap.EndInit();
+                // Freeze for threading
+                //bitmap.Freeze();
+
+                return bitmap;
+            }
+            catch (Exception e)
+            {
+                // TODO: Handle error
+                Debug.WriteLine(e.Message);
+                throw new Exception("foo");
+            }
+            finally
+            {
+                client.Close();
+            }
+        }
+
         public string Visit(GopherLine gopherLine, CancellationToken token)
         {
 
@@ -41,7 +85,7 @@ namespace GopherClient.Service
             int length;
             TcpClient client = new TcpClient();
 
-            data = Encoding.UTF8.GetBytes($"{gopherLine.Selector}\n\r");
+            data = Encoding.UTF8.GetBytes($"{gopherLine.Selector}\r\n");
 
             try
             {
@@ -50,12 +94,15 @@ namespace GopherClient.Service
                 NetworkStream stream = client.GetStream();
 
                 stream.Write(data, 0, data.Length);
+                //data = Encoding.UTF8.GetBytes($"\n\r");
+                //stream.Write(data, 0, data.Length);
 
                 do
                 {
                     token.ThrowIfCancellationRequested();
                     data = new byte[4096];
                     length = stream.Read(data, 0, data.Length);
+                    
                     token.ThrowIfCancellationRequested();
                     string responseData = Encoding.UTF8.GetString(data, 0, length);
                     sb.Append(responseData);

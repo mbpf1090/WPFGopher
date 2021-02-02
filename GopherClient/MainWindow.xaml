@@ -73,6 +73,9 @@
                 <DataTemplate DataType="{x:Type vm:TextViewViewModel}">
                     <views:TextView/>
                 </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:ImageViewViewModel}">
+                    <views:ImageView/>
+                </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
         

@@ -68,7 +68,6 @@ namespace GopherClient.ViewModel
         public RelayCommand GoBackCmd { get; set; }
         #endregion
 
-
         public MainViewModel()
         {
             if (IsInDesignMode)
@@ -223,6 +222,15 @@ namespace GopherClient.ViewModel
                     // Basic URL checking
                     if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
                         Process.Start(url);
+                    break;
+                // Image
+                case "I":
+                    // TODO: Bug current site not added to history
+                    ImageViewViewModel imageViewViewModel = new ImageViewViewModel
+                    {
+                        ImageSource = client.GetImage(gopherLine)
+                    };
+                    CurrentContentView = imageViewViewModel;
                     break;
                 default:
                     return;
