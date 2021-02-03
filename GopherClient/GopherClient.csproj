@@ -106,6 +106,7 @@
     </ApplicationDefinition>
     <Compile Include="Converter\TypeToSymbolConverter.cs" />
     <Compile Include="Model\GopherLine.cs" />
+    <Compile Include="Service\Bookmarker.cs" />
     <Compile Include="Service\Client.cs" />
     <Compile Include="Service\Parser.cs" />
     <Compile Include="ViewModel\ImageViewViewModel.cs" />

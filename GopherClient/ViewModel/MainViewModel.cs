@@ -62,7 +62,7 @@ namespace GopherClient.ViewModel
             }
         }
 
-
+        public RelayCommand ToggleMenuCmd { get; set; }
         public RelayCommand<GopherLine> OpenLineCmd { get; set; }
         public RelayCommand OpenAddressCmd { get; set; }
         public RelayCommand GoBackCmd { get; set; }
@@ -81,6 +81,7 @@ namespace GopherClient.ViewModel
 
             CurrentContentView = new MenuViewViewModel();
 
+            ToggleMenuCmd = new RelayCommand(ToggleMenu);
             OpenAddressCmd = new RelayCommand(OpenAddress, CanOpenAddress);
             GoBackCmd = new RelayCommand(GoBack, client.CanGoBack);
             Address = "gopher.floodgap.com";
@@ -92,7 +93,13 @@ namespace GopherClient.ViewModel
 
         }
 
+
         #region Methods
+        private void ToggleMenu()
+        {
+            
+        }
+
         private void UpdateInfoLabel(GopherLine line)
         {
             if (line != null)
