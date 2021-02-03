@@ -17,13 +17,14 @@
     <Window.Resources>
         <converter:TypeToSymbolConverter x:Key="TypeToSymbol"/>
 
+        <!--SET CUSTOM FONT -->
         <Style TargetType="{x:Type Window}">
-            <!--SET CUSTOM FONT -->
             <Setter Property="FontFamily" Value="{StaticResource MonoidRegular}" />
             <Setter Property="FontSize" Value="16"/>
         </Style>
+        
     </Window.Resources>
-    
+
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}"/>
     </Window.DataContext>
@@ -31,7 +32,7 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="10"/>
     </WindowChrome.WindowChrome>
-    
+
     <Grid>
         <!--Custom Caret https://www.codeproject.com/Articles/633935/Customizing-the-Caret-of-a-WPF-TextBox -->
         <Grid.RowDefinitions>
@@ -45,7 +46,7 @@
             <ColumnDefinition Width="0.2*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <!-- Addressbar -->
         <Grid Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
@@ -59,11 +60,15 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <ToggleButton Content="M"
+            <ToggleButton Content="&#xf85b;"
                           Width="40"
                           Height="40"
                           Grid.Column="0"
-                          IsChecked="False">
+                          IsChecked="False"
+                          Background="{StaticResource MainBG}"
+                          Foreground="{StaticResource MainFG}"
+                          FontFamily="{StaticResource MonoidRegular}"
+                          Style="{DynamicResource ToggleButtonStyle}">
                 <ToggleButton.Triggers>
                     <EventTrigger RoutedEvent="ToggleButton.Unchecked">
                         <BeginStoryboard>
@@ -85,7 +90,7 @@
                                                 Storyboard.TargetName="nav_pnl"
                                                 Storyboard.TargetProperty="Width"
                                                 BeginTime="0:0:0"
-                                                To="230"
+                                                To="40"
                                                 Duration="0:0:0.3">
                                 </DoubleAnimation>
                             </Storyboard>
@@ -113,8 +118,7 @@
                        Grid.Column="1"
                        Stroke="#FFAF00" 
                        Height="1" 
-                       Width="{Binding ActualWidth, ElementName=addressBarTextbox}"
-                       />
+                       Width="{Binding ActualWidth, ElementName=addressBarTextbox}"/>
         </Grid>
 
         <!-- Main Area Grid -->
@@ -123,17 +127,24 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-        
+
             <!-- NavMenu -->
-            <StackPanel Grid.Row="0" 
-                        Grid.Column="0" 
-                        Background="Green"
-                        x:Name="nav_pnl"
-                        Width="0">
-                <Button Content="B" HorizontalAlignment="Center"/>
-            </StackPanel>
-        
-        
+            <Border Grid.Row="0" 
+                    x:Name="nav_pnl"
+                    Grid.Column="0"
+                    Width="0"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource MainFG}">
+                <StackPanel>
+                    <Button Content="B"
+                            HorizontalAlignment="Center"
+                            Command="{Binding NavCmd}"
+                            CommandParameter="bookmarks"
+                            Style="{StaticResource AddressBarBtn}"/>
+                </StackPanel>
+            </Border>
+
+
             <!--Main Content Area-->
             <ContentControl Content="{Binding CurrentContentView}"
                             Grid.Row="0"
@@ -151,7 +162,7 @@
                 </ContentControl.Resources>
             </ContentControl>
         </Grid>
-        
+
         <!-- Status bar -->
         <Border Grid.Row="3" BorderBrush="{StaticResource MainHL}" BorderThickness="1" Grid.ColumnSpan="2">
             <Grid>

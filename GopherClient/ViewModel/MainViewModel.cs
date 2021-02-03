@@ -66,6 +66,7 @@ namespace GopherClient.ViewModel
         public RelayCommand<GopherLine> OpenLineCmd { get; set; }
         public RelayCommand OpenAddressCmd { get; set; }
         public RelayCommand GoBackCmd { get; set; }
+        public RelayCommand<string> NavCmd { get; set; }
         #endregion
 
         public MainViewModel()
@@ -81,9 +82,11 @@ namespace GopherClient.ViewModel
 
             CurrentContentView = new MenuViewViewModel();
 
-            ToggleMenuCmd = new RelayCommand(ToggleMenu);
+            // Commands
             OpenAddressCmd = new RelayCommand(OpenAddress, CanOpenAddress);
             GoBackCmd = new RelayCommand(GoBack, client.CanGoBack);
+            NavCmd = new RelayCommand<string>(Navigate);
+
             Address = "gopher.floodgap.com";
 
             //Setup Messenger
@@ -91,14 +94,25 @@ namespace GopherClient.ViewModel
             MessengerInstance.Register<string>(this, GetSearchTerm);
             MessengerInstance.Register<GopherLine>(this, 1, UpdateInfoLabel);
 
+            // Create bookmarks file
+            Bookmarker.CreateInitialBookmarks();
         }
-
 
         #region Methods
-        private void ToggleMenu()
+        private void Navigate(string menuItem)
         {
-            
+            switch (menuItem)
+            {
+                case "bookmarks":
+                    MenuViewViewModel menuViewViewModel = new MenuViewViewModel();
+                    menuViewViewModel.Menu = Bookmarker.LoadBookmarks();
+                    CurrentContentView = menuViewViewModel;
+                    break;
+                default:
+                    break;
+            }
         }
+
 
         private void UpdateInfoLabel(GopherLine line)
         {
