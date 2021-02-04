@@ -141,6 +141,11 @@
                             Command="{Binding NavCmd}"
                             CommandParameter="bookmarks"
                             Style="{StaticResource AddressBarBtn}"/>
+                    <Button Content="&#xf914;"
+                            HorizontalAlignment="Center"
+                            Command="{Binding NavCmd}"
+                            CommandParameter="addbookmark"
+                            Style="{StaticResource AddressBarBtn}"/>
                 </StackPanel>
             </Border>
 

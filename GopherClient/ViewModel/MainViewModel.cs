@@ -1,5 +1,6 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Ioc;
 using GopherClient.Model;
 using GopherClient.Service;
 using GopherClient.View;
@@ -62,6 +63,8 @@ namespace GopherClient.ViewModel
             }
         }
 
+        public GopherLine CurrentLine { get; set; }
+
         public RelayCommand ToggleMenuCmd { get; set; }
         public RelayCommand<GopherLine> OpenLineCmd { get; set; }
         public RelayCommand OpenAddressCmd { get; set; }
@@ -80,7 +83,7 @@ namespace GopherClient.ViewModel
                 client = new Client();
             }
 
-            CurrentContentView = new MenuViewViewModel();
+            CurrentContentView = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
 
             // Commands
             OpenAddressCmd = new RelayCommand(OpenAddress, CanOpenAddress);
@@ -104,9 +107,13 @@ namespace GopherClient.ViewModel
             switch (menuItem)
             {
                 case "bookmarks":
-                    MenuViewViewModel menuViewViewModel = new MenuViewViewModel();
+                    MenuViewViewModel menuViewViewModel = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
                     menuViewViewModel.Menu = Bookmarker.LoadBookmarks();
                     CurrentContentView = menuViewViewModel;
+                    break;
+                case "addbookmark":
+                    if (CurrentLine != null)
+                        Bookmarker.SaveBookmark(CurrentLine);
                     break;
                 default:
                     break;
@@ -148,7 +155,10 @@ namespace GopherClient.ViewModel
         {
             var rawContent = client.GoBack();
             Address = client.currentSite.Host + client.currentSite.Selector;
-            MenuViewViewModel menuViewViewModel = new MenuViewViewModel();
+
+            CurrentLine = client.currentSite;
+
+            MenuViewViewModel menuViewViewModel = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
             menuViewViewModel.Menu = Parser.Parse(rawContent);
             CurrentContentView = menuViewViewModel;
         }
@@ -167,7 +177,11 @@ namespace GopherClient.ViewModel
                 string[] checkedAddress = Parser.CheckAddress(Address);
                 GopherLine destination = new GopherLine("1", "", checkedAddress[3], checkedAddress[1], checkedAddress[2].Equals("") ? "70" : checkedAddress[2]);
                 var rawContent = await client.GetMenuContentAsync(destination, progress);
-                ((MenuViewViewModel) CurrentContentView).Menu = Parser.Parse(rawContent);
+                MenuViewViewModel menuViewViewModel = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
+                menuViewViewModel.Menu = Parser.Parse(rawContent);
+                CurrentContentView = menuViewViewModel;
+
+                CurrentLine = client.currentSite;
             }
             
         }
@@ -185,6 +199,9 @@ namespace GopherClient.ViewModel
                 Progress = value;
             });
 
+            CurrentLine = gopherLine;
+
+
             switch (gopherLine.Type)
             {
                 // Submenu
@@ -195,7 +212,10 @@ namespace GopherClient.ViewModel
                         Address = client.currentSite.Host + client.currentSite.Selector;
                         try
                         {
-                            ((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
+                            MenuViewViewModel menuViewViewModel = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
+                            menuViewViewModel.Menu = Parser.Parse(rawContent);
+                            CurrentContentView = menuViewViewModel;
+                            //((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
                         }
                         catch (ArgumentOutOfRangeException ex)
                         {
@@ -216,10 +236,10 @@ namespace GopherClient.ViewModel
                         
                         var rawContent = await client.GetTextContentAsync(gopherLine);
                         Address = client.currentSite.Host + client.currentSite.Selector;
-                        TextViewViewModel textViewViewModel = new TextViewViewModel
-                        {
-                            TextContent = rawContent
-                        };
+                        //SimpleIoc.Default.GetInstance<TextViewViewModel>();
+                        TextViewViewModel textViewViewModel = SimpleIoc.Default.GetInstance<TextViewViewModel>();
+                        textViewViewModel.TextContent = rawContent;
+                        
                         CurrentContentView = textViewViewModel;
                     }
                     catch (OperationCanceledException)
@@ -247,10 +267,8 @@ namespace GopherClient.ViewModel
                 // Image
                 case "I":
                     // TODO: Bug current site not added to history
-                    ImageViewViewModel imageViewViewModel = new ImageViewViewModel
-                    {
-                        ImageSource = client.GetImage(gopherLine)
-                    };
+                    ImageViewViewModel imageViewViewModel = SimpleIoc.Default.GetInstance<ImageViewViewModel>();
+                    imageViewViewModel.ImageSource = client.GetImage(gopherLine);
                     CurrentContentView = imageViewViewModel;
                     break;
                 default:

@@ -43,6 +43,8 @@ namespace GopherClient.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<MenuViewViewModel>();
+            SimpleIoc.Default.Register<TextViewViewModel>();
             SimpleIoc.Default.Register<SearchViewModel>();
             SimpleIoc.Default.Register<ImageViewViewModel>();
         }
