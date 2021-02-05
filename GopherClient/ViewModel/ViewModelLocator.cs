@@ -47,6 +47,7 @@ namespace GopherClient.ViewModel
             SimpleIoc.Default.Register<TextViewViewModel>();
             SimpleIoc.Default.Register<SearchViewModel>();
             SimpleIoc.Default.Register<ImageViewViewModel>();
+            SimpleIoc.Default.Register<BookmarksViewModel>();
         }
 
         public MainViewModel Main
@@ -70,6 +71,14 @@ namespace GopherClient.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<ImageViewViewModel>();
+            }
+        }
+
+        public BookmarksViewModel BookmarksViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<BookmarksViewModel>();
             }
         }
 

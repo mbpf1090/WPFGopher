@@ -45,6 +45,11 @@
                     <Setter Property="Focusable" Value="True"/>
                     <Setter Property="IsHitTestVisible" Value="True"/>
                 </DataTrigger>
+                <!-- Gif link -->
+                <DataTrigger Binding="{Binding Type}" Value="g">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderThickness" Value="0"/>
                     <Setter Property="Background" Value="Red"/>

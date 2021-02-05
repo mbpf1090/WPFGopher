@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GopherClient.Model;
 using GopherClient.Service;
 using GopherClient.View;
+using LinqToDB;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -107,13 +108,19 @@ namespace GopherClient.ViewModel
             switch (menuItem)
             {
                 case "bookmarks":
-                    MenuViewViewModel menuViewViewModel = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
-                    menuViewViewModel.Menu = Bookmarker.LoadBookmarks();
-                    CurrentContentView = menuViewViewModel;
+                    BookmarksViewModel bookmarksViewModel = SimpleIoc.Default.GetInstance<BookmarksViewModel>();
+                    //menuViewViewModel.Menu = Bookmarker.LoadBookmarks();
+                    CurrentContentView = bookmarksViewModel;
                     break;
                 case "addbookmark":
                     if (CurrentLine != null)
-                        Bookmarker.SaveBookmark(CurrentLine);
+                    {
+                        using (var db = new GopherDB())
+                        {
+                            Bookmark b = new Bookmark(CurrentLine);
+                            db.Insert(b);
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -175,7 +182,8 @@ namespace GopherClient.ViewModel
                 });
 
                 string[] checkedAddress = Parser.CheckAddress(Address);
-                GopherLine destination = new GopherLine("1", "", checkedAddress[3], checkedAddress[1], checkedAddress[2].Equals("") ? "70" : checkedAddress[2]);
+                // [0]string type, [1]string userDisplay, [2]string selector, [3]string host, [4]string port
+                GopherLine destination = new GopherLine("1", "", checkedAddress[2], checkedAddress[1], checkedAddress[3].Equals("") ? "70" : checkedAddress[3]);
                 var rawContent = await client.GetMenuContentAsync(destination, progress);
                 MenuViewViewModel menuViewViewModel = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
                 menuViewViewModel.Menu = Parser.Parse(rawContent);
@@ -265,6 +273,7 @@ namespace GopherClient.ViewModel
                         Process.Start(url);
                     break;
                 // Image
+                case "g":
                 case "I":
                     // TODO: Bug current site not added to history
                     ImageViewViewModel imageViewViewModel = SimpleIoc.Default.GetInstance<ImageViewViewModel>();

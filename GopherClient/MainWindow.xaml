@@ -164,6 +164,9 @@
                     <DataTemplate DataType="{x:Type vm:ImageViewViewModel}">
                         <views:ImageView/>
                     </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:BookmarksViewModel}">
+                        <views:BookmarksView/>
+                    </DataTemplate>
                 </ContentControl.Resources>
             </ContentControl>
         </Grid>
