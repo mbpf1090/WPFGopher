@@ -101,8 +101,7 @@
             <TextBox Grid.Column="1"
                      x:Name="addressBarTextbox" 
                      Style="{StaticResource textBoxMainStyle}"
-                     Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"
-                     />
+                     Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Grid.Column="2" 
                     Content="Go" 
                     Style="{StaticResource AddressBarBtn}"
@@ -172,7 +171,7 @@
         </Grid>
 
         <!-- Status bar -->
-        <Border Grid.Row="3" BorderBrush="{StaticResource MainHL}" BorderThickness="1" Grid.ColumnSpan="2">
+        <Border Grid.Row="3" BorderBrush="{StaticResource MainFG}" BorderThickness="1" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -184,7 +183,7 @@
                              Height="20"
                              Background="{StaticResource MainBG}"
                              Foreground="{StaticResource MainFG}"
-                             BorderBrush="{StaticResource MainHL}"
+                             BorderBrush="{StaticResource MainFG}"
                              BorderThickness="1"
                              Opacity="0.7"
                              Value="{Binding Progress}"/>

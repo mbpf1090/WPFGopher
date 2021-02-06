@@ -5,42 +5,194 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GopherClient.View"
              mc:Ignorable="d" 
+             xmlns:converter="clr-namespace:GopherClient.Converter"
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <converter:TypeToSymbolConverter x:Key="TypeToSymbol"/>
+
+        <!-- Menu Style -->
+        <Style x:Key="menuStyle" TargetType="{x:Type ListBox}">
+            <Setter Property="Background" Value="{StaticResource MainBG}"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <!-- Menu Item Style -->
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Style.Triggers>
+                <!-- Menu -->
+                <DataTrigger Binding="{Binding Type}" Value="1">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
+                <!-- Text -->
+                <DataTrigger Binding="{Binding Type}" Value="0">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
+                <!-- Search -->
+                <DataTrigger Binding="{Binding Type}" Value="7">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
+                <!-- HTML link -->
+                <DataTrigger Binding="{Binding Type}" Value="h">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
+                <!-- Image link -->
+                <DataTrigger Binding="{Binding Type}" Value="I">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
+                <!-- Gif link -->
+                <DataTrigger Binding="{Binding Type}" Value="g">
+                    <Setter Property="Focusable" Value="True"/>
+                    <Setter Property="IsHitTestVisible" Value="True"/>
+                </DataTrigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Background" Value="Red"/>
+                    <Setter Property="IsSelected" Value="True"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Content Line Style -->
+        <Style x:Key="listItemStyle"  TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource MainFG}"/>
+            <Setter Property="FontFamily" Value="{StaticResource MonoidRegular}" />
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <!-- Details label style-->
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="FontFamily" Value="{StaticResource MonoidRegular}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="{StaticResource MainFG}"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        
+        <!-- Header -->
         <Label Content="Bookmarks" 
                Grid.Row="0" 
                Background="{StaticResource MainBG}"
                Foreground="{StaticResource MainFG}"
                HorizontalContentAlignment="Center"
                FontSize="20"/>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Bookmarks}">
+        
+        <!-- Content -->
+        <ListBox Grid.Row="1" ItemsSource="{Binding Bookmarks}" 
+                 Style="{StaticResource menuStyle}" 
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Title:"/>
-                        <TextBox Text="{Binding Title}"/>
-                        <Label Content="Saved:"/>
-                        <Label Content="{Binding CreatedAt}"/>
-                        <Label Content="Type:"/>
-                        <Label Content="{Binding Type}"/>
-                        <Label Content="User Display:"/>
-                        <Label Content="{Binding UserDisplay}"/>
-                        <Label Content="Selector:"/>
-                        <TextBox Text="{Binding Selector}"/>
-                        <Label Content="Port:"/>
-                        <TextBox Text="{Binding Port}"/>
-                        <Label Content="Host:"/>
-                        <TextBox Text="{Binding Host}"/>
-                        <Button Content="Save"
-                                Command="{Binding DataContext.SaveBookmarkCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                CommandParameter="{Binding}"/>
-                        <Button Content="Delete"
-                                Command="{Binding DataContext.DeleteBookmarkCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                CommandParameter="{Binding}"/>
+                    <StackPanel>
+                        <!-- Bookmark -->
+                        <StackPanel Orientation="Horizontal">
+                            <Button Style="{StaticResource LineButton}"
+                                    Command="{Binding DataContext.OpenLineCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Type, Converter={StaticResource TypeToSymbol}}" Style="{StaticResource listItemStyle}"/>
+                                    <TextBlock Text="{Binding UserDisplay}" Style="{StaticResource listItemStyle}"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Content="&#xf044;"
+                                    Command="{Binding DataContext.SaveBookmarkCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding}" 
+                                    Style="{StaticResource AddressBarBtn}"
+                                    Margin="5 0"/>
+                            <Button Content="&#xf6bf;"
+                                    Command="{Binding DataContext.DeleteBookmarkCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource AddressBarBtn}"
+                                    Margin="5 0"
+                                    FontSize="16"/>
+                            <ToggleButton Content="&#xf129;"
+                                          IsChecked="False"
+                                          Background="{StaticResource MainBG}"
+                                          Foreground="{StaticResource MainFG}"
+                                          FontFamily="{StaticResource MonoidRegular}"
+                                          Style="{DynamicResource ToggleButtonStyle}"
+                                          Margin="5 0"
+                                          Width="40"
+                                          Height="40">
+                                <ToggleButton.Triggers>
+                                    <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                                        <BeginStoryboard>
+                                            <Storyboard x:Name="HideDetailsPanel">
+                                                <DoubleAnimation    
+                                                Storyboard.TargetName="details_pnl"
+                                                Storyboard.TargetProperty="Height"
+                                                BeginTime="0:0:0"
+                                                To="0"
+                                                Duration="0:0:0.2">
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="ToggleButton.Checked">
+                                        <BeginStoryboard>
+                                            <Storyboard x:Name="ShowDetailsPanel">
+                                                <DoubleAnimation
+                                                Storyboard.TargetName="details_pnl"
+                                                Storyboard.TargetProperty="Height"
+                                                BeginTime="0:0:0"
+                                                To="80"
+                                                Duration="0:0:0.3">
+                                                </DoubleAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </ToggleButton.Triggers>
+                            </ToggleButton>
+                        </StackPanel>
+                        <!-- Bookmark details -->
+                        <Grid
+                            Height="0"
+                            x:Name="details_pnl">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Host" Grid.Row="0" Grid.Column="0"/>
+                            <TextBlock Text="{Binding Host}"
+                                       Style="{StaticResource listItemStyle}"
+                                       Grid.Column="1"/>
+                            <Label Content="Port" Grid.Row="0" Grid.Column="2"/>
+                            <TextBlock Text="{Binding Port}" 
+                                       Style="{StaticResource listItemStyle}"
+                                       Grid.Column="3"/>
+                            <Label Content="User Display" Grid.Row="1" Grid.Column="0"/>
+                            <TextBlock Text="{Binding UserDisplay}" 
+                                       Style="{StaticResource listItemStyle}"
+                                       Grid.Row="1"
+                                       Grid.Column="1"/>
+                            <Label Content="Selector" Grid.Row="1" Grid.Column="2"/>
+                            <TextBlock Text="{Binding Selector}" 
+                                       Style="{StaticResource listItemStyle}"
+                                       Grid.Row="1"
+                                       Grid.Column="3"/>
+                        </Grid>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

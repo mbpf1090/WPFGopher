@@ -25,12 +25,14 @@ namespace GopherClient.ViewModel
             }
         }
 
+        public RelayCommand<Bookmark> OpenLineCmd { get; set; }
         public RelayCommand<Bookmark> SaveBookmarkCmd { get; set; }
         public RelayCommand<Bookmark> DeleteBookmarkCmd { get; set; }
 
         #endregion
         public BookmarksViewModel()
         {
+            OpenLineCmd = new RelayCommand<Bookmark>(OpenLine);
             SaveBookmarkCmd = new RelayCommand<Bookmark>(SaveBookmark);
             DeleteBookmarkCmd = new RelayCommand<Bookmark>(DeleteBookmark);
 
@@ -38,6 +40,12 @@ namespace GopherClient.ViewModel
         }
 
         #region Methods
+        private void OpenLine(Bookmark bm)
+        {
+            GopherLine line = new GopherLine(bm.Type, bm.UserDisplay, bm.Selector, bm.Host, bm.Port.ToString());
+            MessengerInstance.Send<GopherLine>(line);
+        }
+
         private void SaveBookmark(Bookmark bookmark)
         {
             using (var db = new GopherDB())
@@ -56,7 +64,7 @@ namespace GopherClient.ViewModel
             UpdateBookmarksList();
         }
 
-        private void UpdateBookmarksList()
+        public void UpdateBookmarksList()
         {
             using (var db = new GopherDB())
             {

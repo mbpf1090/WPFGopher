@@ -120,6 +120,8 @@ namespace GopherClient.ViewModel
                             Bookmark b = new Bookmark(CurrentLine);
                             db.Insert(b);
                         }
+                        BookmarksViewModel bmVM = SimpleIoc.Default.GetInstance<BookmarksViewModel>();
+                        bmVM.UpdateBookmarksList();
                     }
                     break;
                 default:

@@ -61,7 +61,7 @@
         <!-- Content Line Style -->
         <Style x:Key="listItemStyle"  TargetType="{x:Type TextBlock}">
             <Setter Property="Foreground" Value="{StaticResource MainFG}"/>
-            <Setter Property="FontFamily" Value="Courier New" />
+            <Setter Property="FontFamily" Value="{StaticResource MonoidRegular}" />
             <Setter Property="FontSize" Value="16"/>
         </Style>
     </UserControl.Resources>
@@ -78,8 +78,8 @@
                             Command="{Binding DataContext.OpenLineCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
                             CommandParameter="{Binding}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Type, Converter={StaticResource TypeToSymbol}}" Style="{StaticResource listItemStyle}" FontFamily="{StaticResource MonoidRegular}"/>
-                            <TextBlock Text="{Binding UserDisplay}" Style="{StaticResource listItemStyle}" FontFamily="{StaticResource MonoidRegular}"/>
+                            <TextBlock Text="{Binding Type, Converter={StaticResource TypeToSymbol}}" Style="{StaticResource listItemStyle}"/>
+                            <TextBlock Text="{Binding UserDisplay}" Style="{StaticResource listItemStyle}"/>
                         </StackPanel>
                     </Button>
                 </DataTemplate>
