@@ -12,7 +12,7 @@ namespace GopherClient.ViewModel
 {
     public class MenuViewViewModel : ViewModelBase
     {
-        
+        #region Properties
         private List<GopherLine> _menu;
         public List<GopherLine> Menu
         {
@@ -36,6 +36,7 @@ namespace GopherClient.ViewModel
         }
 
         public RelayCommand<GopherLine> OpenLineCmd { get; set; }
+        #endregion
 
         public MenuViewViewModel()
         {
@@ -44,6 +45,7 @@ namespace GopherClient.ViewModel
             
         }
 
+        #region Methods
         private void OpenLine(GopherLine line)
         {
             Debug.WriteLine(line.Host);
@@ -54,5 +56,6 @@ namespace GopherClient.ViewModel
         {
             MessengerInstance.Send<GopherLine>(line, 1);
         }
+        #endregion
     }
 }

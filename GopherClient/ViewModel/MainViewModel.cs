@@ -129,7 +129,6 @@ namespace GopherClient.ViewModel
             }
         }
 
-
         private void UpdateInfoLabel(GopherLine line)
         {
             if (line != null)

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LinqToDB;
+using GopherClient.View;
 
 namespace GopherClient.ViewModel
 {
@@ -26,14 +27,14 @@ namespace GopherClient.ViewModel
         }
 
         public RelayCommand<Bookmark> OpenLineCmd { get; set; }
-        public RelayCommand<Bookmark> SaveBookmarkCmd { get; set; }
+        public RelayCommand<Bookmark> EditBookmarkCmd { get; set; }
         public RelayCommand<Bookmark> DeleteBookmarkCmd { get; set; }
 
         #endregion
         public BookmarksViewModel()
         {
             OpenLineCmd = new RelayCommand<Bookmark>(OpenLine);
-            SaveBookmarkCmd = new RelayCommand<Bookmark>(SaveBookmark);
+            EditBookmarkCmd = new RelayCommand<Bookmark>(EditBookmark);
             DeleteBookmarkCmd = new RelayCommand<Bookmark>(DeleteBookmark);
 
             UpdateBookmarksList();
@@ -46,12 +47,17 @@ namespace GopherClient.ViewModel
             MessengerInstance.Send<GopherLine>(line);
         }
 
-        private void SaveBookmark(Bookmark bookmark)
+        private void EditBookmark(Bookmark bookmark)
         {
-            using (var db = new GopherDB())
+            BookmarkEditView editWindow = new BookmarkEditView
             {
-                db.Update(bookmark);
-            }
+                Owner = App.Current.MainWindow
+                
+            };
+
+            ((BookmarkEditViewModel)editWindow.DataContext).Bookmark = bookmark;
+
+            editWindow.ShowDialog();
             UpdateBookmarksList();
         }
 

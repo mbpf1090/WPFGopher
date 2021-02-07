@@ -120,6 +120,7 @@
     <Compile Include="Service\Bookmarker.cs" />
     <Compile Include="Service\Client.cs" />
     <Compile Include="Service\Parser.cs" />
+    <Compile Include="ViewModel\BookmarkEditViewModel.cs" />
     <Compile Include="ViewModel\BookmarksViewModel.cs" />
     <Compile Include="ViewModel\ImageViewViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -127,6 +128,9 @@
     <Compile Include="ViewModel\SearchViewModel.cs" />
     <Compile Include="ViewModel\TextViewViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\BookmarkEditView.xaml.cs">
+      <DependentUpon>BookmarkEditView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\BookmarksView.xaml.cs">
       <DependentUpon>BookmarksView.xaml</DependentUpon>
     </Compile>
@@ -171,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Style\Textbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\BookmarkEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
