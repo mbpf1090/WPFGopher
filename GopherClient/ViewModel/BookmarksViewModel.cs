@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LinqToDB;
 using GopherClient.View;
+using GopherClient.Service;
 
 namespace GopherClient.ViewModel
 {
@@ -47,7 +48,7 @@ namespace GopherClient.ViewModel
             }
             else
             { 
-                UpdateBookmarksList();
+                Task.Run(async () => await UpdateBookmarksList());
             } 
 
         }
@@ -59,7 +60,7 @@ namespace GopherClient.ViewModel
             MessengerInstance.Send<GopherLine>(line);
         }
 
-        private void EditBookmark(Bookmark bookmark)
+        private async void EditBookmark(Bookmark bookmark)
         {
             BookmarkEditView editWindow = new BookmarkEditView
             {
@@ -70,24 +71,22 @@ namespace GopherClient.ViewModel
             ((BookmarkEditViewModel)editWindow.DataContext).Bookmark = bookmark;
 
             editWindow.ShowDialog();
-            UpdateBookmarksList();
+            await UpdateBookmarksList();
         }
 
-        private void DeleteBookmark(Bookmark bookmark)
+        private async void DeleteBookmark(Bookmark bookmark)
         {
             using (var db = new GopherDB())
             {
                 db.Bookmark.Where(b => b.Id == bookmark.Id).Delete();
             }
-            UpdateBookmarksList();
+            await UpdateBookmarksList();
         }
 
-        public void UpdateBookmarksList()
+        public async Task UpdateBookmarksList()
         {
-            using (var db = new GopherDB())
-            {
-                Bookmarks = new ObservableCollection<Bookmark>(db.GetTable<Bookmark>().ToList());
-            }
+            List<Bookmark> bookmarks = await Bookmarker.LoadBookmarks();
+            Bookmarks = new ObservableCollection<Bookmark>(bookmarks);
         }
         #endregion
     }
