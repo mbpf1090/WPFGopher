@@ -36,8 +36,20 @@ namespace GopherClient.ViewModel
             OpenLineCmd = new RelayCommand<Bookmark>(OpenLine);
             EditBookmarkCmd = new RelayCommand<Bookmark>(EditBookmark);
             DeleteBookmarkCmd = new RelayCommand<Bookmark>(DeleteBookmark);
+            
+            if (IsInDesignMode)
+            {
+                Bookmarks = new ObservableCollection<Bookmark> 
+                { 
+                    new Bookmark { CreatedAt = DateTime.Now, Host = "taz.de", Id = 0, Port = 70, Selector = "/", Title = "TAZ", Type = "1", UserDisplay = ""},
+                    new Bookmark { CreatedAt = DateTime.Now, Host = "taz.de", Id = 0, Port = 70, Selector = "/", Title = "TAZ ist ein viel laengerer Titel den man nicht lsen klann", Type = "1", UserDisplay = ""}
+                };
+            }
+            else
+            { 
+                UpdateBookmarksList();
+            } 
 
-            UpdateBookmarksList();
         }
 
         #region Methods

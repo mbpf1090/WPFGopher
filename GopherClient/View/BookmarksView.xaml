@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GopherClient.View"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             DataContext="{Binding BookmarksViewModel, Source={StaticResource Locator}}"
              xmlns:converter="clr-namespace:GopherClient.Converter"
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -16,12 +17,29 @@
             <Setter Property="Background" Value="{StaticResource MainBG}"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MainBG}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MainBG}"/>
+                </Trigger>
+                
+            </Style.Triggers>
         </Style>
         <!-- Menu Item Style -->
         <Style TargetType="{x:Type ListBoxItem}">
             <Setter Property="Focusable" Value="False"/>
             <Setter Property="IsHitTestVisible" Value="False"/>
             <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MainBG}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MainBG}"/>
+                </Trigger>
                 <!-- Menu -->
                 <DataTrigger Binding="{Binding Type}" Value="1">
                     <Setter Property="Focusable" Value="True"/>
@@ -54,7 +72,6 @@
                 </DataTrigger>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="Background" Value="Red"/>
                     <Setter Property="IsSelected" Value="True"/>
                 </Trigger>
             </Style.Triggers>
@@ -96,40 +113,70 @@
         <ListBox Grid.Row="1" ItemsSource="{Binding Bookmarks}" 
                  Style="{StaticResource menuStyle}" 
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 HorizontalContentAlignment="Stretch">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="IsSelected" Value="{Binding Content.IsSelected, Mode=TwoWay, RelativeSource={RelativeSource Self}}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
                         <!-- Bookmark -->
-                        <StackPanel Orientation="Horizontal">
-                            <Button Style="{StaticResource LineButton}"
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Bookmark Title-->
+                            <Button Grid.Column="0"
+                                    Style="{StaticResource LineButton}"
                                     Command="{Binding DataContext.OpenLineCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                    CommandParameter="{Binding}">
+                                    CommandParameter="{Binding}" HorizontalContentAlignment="Stretch">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Type, Converter={StaticResource TypeToSymbol}}" Style="{StaticResource listItemStyle}"/>
                                     <TextBlock Text="{Binding Title}" Style="{StaticResource listItemStyle}"/>
                                 </StackPanel>
                             </Button>
-                            <Button Content="&#xf044;"
+                            <!-- Edit Button-->
+                            <Button Grid.Column="1"
+                                    Content="&#xf044;"
                                     Command="{Binding DataContext.EditBookmarkCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                     CommandParameter="{Binding}" 
-                                    Style="{StaticResource AddressBarBtn}"
+                                    Style="{StaticResource BookmarklineBtn}"
                                     Margin="5 0"/>
-                            <Button Content="&#xf6bf;"
+                            <!-- Delete Button-->
+                            <Button Grid.Column="2"
+                                    Content="&#xf6bf;"
                                     Command="{Binding DataContext.DeleteBookmarkCmd, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                     CommandParameter="{Binding}"
-                                    Style="{StaticResource AddressBarBtn}"
+                                    Style="{StaticResource BookmarklineBtn}"
+                                    Margin="5 0"/>
+                            <!-- Details Button-->
+                            <ToggleButton Grid.Column="3"
+                                    Content="&#xf129;"
+                                    IsChecked="False"
+                                    Background="{StaticResource MainBG}"
+                                    Foreground="{StaticResource MainFG}"
+                                    FontFamily="{StaticResource MonoidRegular}"
+                                    Style="{DynamicResource ToggleButtonStyle}"
                                     Margin="5 0"
-                                    FontSize="16"/>
-                            <ToggleButton Content="&#xf129;"
-                                          IsChecked="False"
-                                          Background="{StaticResource MainBG}"
-                                          Foreground="{StaticResource MainFG}"
-                                          FontFamily="{StaticResource MonoidRegular}"
-                                          Style="{DynamicResource ToggleButtonStyle}"
-                                          Margin="5 0"
-                                          Width="40"
-                                          Height="40">
+                                    Width="40"
+                                    Height="40">
                                 <ToggleButton.Triggers>
                                     <EventTrigger RoutedEvent="ToggleButton.Unchecked">
                                         <BeginStoryboard>
@@ -159,9 +206,9 @@
                                     </EventTrigger>
                                 </ToggleButton.Triggers>
                             </ToggleButton>
-                        </StackPanel>
+                        </Grid>
                         <!-- Bookmark details -->
-                        <Grid
+                        <Grid Grid.Row="1"
                             Height="0"
                             x:Name="details_pnl">
                             <Grid.RowDefinitions>
@@ -193,7 +240,7 @@
                                        Grid.Row="1"
                                        Grid.Column="3"/>
                         </Grid>
-                    </StackPanel>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
