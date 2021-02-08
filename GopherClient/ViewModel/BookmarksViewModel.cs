@@ -76,10 +76,7 @@ namespace GopherClient.ViewModel
 
         private async void DeleteBookmark(Bookmark bookmark)
         {
-            using (var db = new GopherDB())
-            {
-                db.Bookmark.Where(b => b.Id == bookmark.Id).Delete();
-            }
+            await Bookmarker.DeleteBookmark(bookmark);
             await UpdateBookmarksList();
         }
 

@@ -19,5 +19,27 @@ namespace GopherClient.Service
                 return db.GetTable<Bookmark>().ToListAsync();
             }
         }
+
+        public static Task DeleteBookmark(Bookmark bm)
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new GopherDB())
+                {
+                    db.Bookmark.Where(b => b.Id == bm.Id).Delete();
+                }
+            });
+        }
+
+        public static Task UpdateBookmark(Bookmark bm)
+        {
+            return Task.Run(() =>
+            {
+                using (var db = new GopherDB())
+                {
+                    db.Update(bm);
+                }
+            });
+        }
     }
 }

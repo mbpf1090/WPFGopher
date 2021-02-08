@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using GopherClient.Model;
+using GopherClient.Service;
 using GopherClient.View;
 using LinqToDB;
 using System;
@@ -33,12 +34,9 @@ namespace GopherClient.ViewModel
             SaveCmd = new RelayCommand<Window>(Save);
         }
 
-        private void Save(Window window)
+        private async void Save(Window window)
         {
-            using (var db = new GopherDB())
-            {
-                db.Update(Bookmark);
-            }
+            await Bookmarker.UpdateBookmark(Bookmark);
             window.Close();
 
         }

@@ -17,14 +17,15 @@ namespace GopherClient.Service
     {
         private Stack<GopherLine> stack;
         private Dictionary<GopherLine, string> cache;
-        public GopherLine currentSite { get; set; }
-
-        public string serverAdress { get; set; }
         private byte[] data;
 
         private CancellationTokenSource tokenSource;
         private CancellationToken cancellationToken;
         private Task<string> getDataTask;
+
+        public GopherLine currentSite { get; set; }
+        public string serverAdress { get; set; }
+
 
         public Client()
         {
