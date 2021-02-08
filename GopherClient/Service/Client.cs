@@ -15,12 +15,13 @@ namespace GopherClient.Service
 {
     public class Client
     {
+        // TODO REMOVE
+        private int i = 0;
+
         private Stack<GopherLine> stack;
         private Dictionary<GopherLine, string> cache;
         private byte[] data;
 
-        private CancellationTokenSource tokenSource;
-        private CancellationToken cancellationToken;
         private Task<string> getDataTask;
 
         public GopherLine currentSite { get; set; }
@@ -31,8 +32,6 @@ namespace GopherClient.Service
         {
             stack = new Stack<GopherLine>();
             cache = new Dictionary<GopherLine, string>();
-            tokenSource = new CancellationTokenSource();
-            cancellationToken = tokenSource.Token;
 
         }
 
@@ -77,12 +76,11 @@ namespace GopherClient.Service
             }
         }
 
-        public string Visit(GopherLine gopherLine, CancellationToken token)
+        public string Visit(GopherLine gopherLine)
         {
-
+            i++;
+            Debug.WriteLine(i);
             StringBuilder sb = new StringBuilder();
-            tokenSource = new CancellationTokenSource();
-            cancellationToken = tokenSource.Token;
             int length;
             TcpClient client = new TcpClient();
 
@@ -90,21 +88,16 @@ namespace GopherClient.Service
 
             try
             {
-                token.ThrowIfCancellationRequested();
                 client.Connect(gopherLine.Host, int.Parse(gopherLine.Port));
                 NetworkStream stream = client.GetStream();
 
                 stream.Write(data, 0, data.Length);
-                //data = Encoding.UTF8.GetBytes($"\n\r");
-                //stream.Write(data, 0, data.Length);
 
                 do
                 {
-                    token.ThrowIfCancellationRequested();
                     data = new byte[4096];
                     length = stream.Read(data, 0, data.Length);
                     
-                    token.ThrowIfCancellationRequested();
                     string responseData = Encoding.UTF8.GetString(data, 0, length);
                     sb.Append(responseData);
                 } while (length > 0);
@@ -112,14 +105,6 @@ namespace GopherClient.Service
             catch (SocketException)
             {
                 sb.Append("iServer timed out...\t \t \t ");
-            }
-            catch (OperationCanceledException)
-            {
-                return string.Empty;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                return string.Empty;
             }
             finally
             {
@@ -197,13 +182,14 @@ namespace GopherClient.Service
         public async Task<string> GetTextContentAsync(GopherLine destination)
         {
             string rawContent;
+
             if (cache.ContainsKey(destination))
             {
                 rawContent =  cache[destination];
             }
             else
             {
-                rawContent = Visit(destination, cancellationToken);
+                rawContent = Visit(destination);
                 cache.Add(destination, rawContent);
             }
 
@@ -213,46 +199,43 @@ namespace GopherClient.Service
             return rawContent;
         }
 
-        public async Task<string> GetMenuContentAsync(GopherLine destination, IProgress<int> progress)
+        public async Task<string> GetMenuContentAsync(GopherLine destination, IProgress<int> progress, CancellationToken token)
         {
             progress.Report(25);
+            
             string rawContent;
+
             if (cache.ContainsKey(destination))
             {
+                // TODO Fix cache error with hash function on gopherline
                 rawContent = cache[destination];
-                stack.Push(currentSite);
-                currentSite = destination;
-
-                progress.Report(100);
-
-                return rawContent;
             }
-
-            try
+            else
             {
-                if (getDataTask?.Status == TaskStatus.Running)
+                try
                 {
-                    tokenSource.Cancel();
+                    progress.Report(50);
+                    token.ThrowIfCancellationRequested();
+                    getDataTask = Task.Run(() => Visit(destination));
+                    rawContent = await getDataTask;
+                    token.ThrowIfCancellationRequested();
+
+                    cache.Add(destination, rawContent);
+
+                    progress.Report(100);
                 }
-
-                progress.Report(50);
-
-                getDataTask = Task.Run(() => Visit(destination, cancellationToken));
-                rawContent = await getDataTask;
-                if (getDataTask.IsCanceled)
-                    throw new OperationCanceledException();
-                cache.Add(destination, rawContent);
-                stack.Push(currentSite);
-                currentSite = destination;
-
-                progress.Report(100);
-
-                return rawContent;
-            } 
-            catch (OperationCanceledException)
-            {
-                throw new OperationCanceledException();
+                catch (OperationCanceledException)
+                {
+                    return "";
+                }
             }
+
+            stack.Push(currentSite);
+            currentSite = destination;
+
+            progress.Report(100);
+
+            return rawContent;
         }
 
         public string GoBack()
@@ -269,12 +252,5 @@ namespace GopherClient.Service
             return stack.Count > 1;
         }
 
-        public void CancelRequest()
-        {
-            if (getDataTask?.Status == TaskStatus.Running)
-            {
-                tokenSource.Cancel();
-            }
-        }
     }
 }

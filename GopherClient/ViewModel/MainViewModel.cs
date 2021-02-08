@@ -8,6 +8,7 @@ using LinqToDB;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GopherClient.ViewModel
@@ -65,6 +66,8 @@ namespace GopherClient.ViewModel
         }
 
         public GopherLine CurrentLine { get; set; }
+        public bool IsRequesting { get; set; }
+        public CancellationTokenSource TokenSource { get; set; }
 
         public RelayCommand ToggleMenuCmd { get; set; }
         public RelayCommand<GopherLine> OpenLineCmd { get; set; }
@@ -92,14 +95,13 @@ namespace GopherClient.ViewModel
             NavCmd = new RelayCommand<string>(Navigate);
 
             Address = "gopher.floodgap.com";
+            IsRequesting = false;
+            TokenSource = new CancellationTokenSource();
 
             //Setup Messenger
             MessengerInstance.Register<GopherLine>(this, OpenLine);
             MessengerInstance.Register<string>(this, GetSearchTerm);
             MessengerInstance.Register<GopherLine>(this, 1, UpdateInfoLabel);
-
-            // Create bookmarks file
-            Bookmarker.CreateInitialBookmarks();
         }
 
         #region Methods
@@ -147,7 +149,7 @@ namespace GopherClient.ViewModel
                     Progress = value;
                 });
 
-                var rawContent = await client.GetMenuContentAsync(searchLine, progress);
+                var rawContent = await client.GetMenuContentAsync(searchLine, progress, TokenSource.Token);
                 Address = client.currentSite.Host + client.currentSite.Selector;
                 ((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
             }
@@ -185,7 +187,7 @@ namespace GopherClient.ViewModel
                 string[] checkedAddress = Parser.CheckAddress(Address);
                 // [0]string type, [1]string userDisplay, [2]string selector, [3]string host, [4]string port
                 GopherLine destination = new GopherLine("1", "", checkedAddress[2], checkedAddress[1], checkedAddress[3].Equals("") ? "70" : checkedAddress[3]);
-                var rawContent = await client.GetMenuContentAsync(destination, progress);
+                var rawContent = await client.GetMenuContentAsync(destination, progress, TokenSource.Token);
                 MenuViewViewModel menuViewViewModel = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
                 menuViewViewModel.Menu = Parser.Parse(rawContent);
                 CurrentContentView = menuViewViewModel;
@@ -202,7 +204,15 @@ namespace GopherClient.ViewModel
 
         private async void OpenLine(GopherLine gopherLine)
         {
+            if (IsRequesting)
+            {
+                TokenSource.Cancel();
+                TokenSource = new CancellationTokenSource();
+            }
+
+            IsRequesting = true;
             ResetProgressBar();
+
             var progress = new Progress<int>((value) =>
             {
                 Progress = value;
@@ -210,21 +220,20 @@ namespace GopherClient.ViewModel
 
             CurrentLine = gopherLine;
 
-
             switch (gopherLine.Type)
             {
                 // Submenu
                 case "1":
                     try
                     {
-                        var rawContent = await client.GetMenuContentAsync(gopherLine, progress);
+                        var rawContent = await client.GetMenuContentAsync(gopherLine, progress, TokenSource.Token);
                         Address = client.currentSite.Host + client.currentSite.Selector;
                         try
                         {
                             MenuViewViewModel menuViewViewModel = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
                             menuViewViewModel.Menu = Parser.Parse(rawContent);
                             CurrentContentView = menuViewViewModel;
-                            //((MenuViewViewModel)CurrentContentView).Menu = Parser.Parse(rawContent);
+                            IsRequesting = false;
                         }
                         catch (ArgumentOutOfRangeException ex)
                         {
@@ -242,14 +251,15 @@ namespace GopherClient.ViewModel
                 case "0":
                     try
                     {
-                        
                         var rawContent = await client.GetTextContentAsync(gopherLine);
                         Address = client.currentSite.Host + client.currentSite.Selector;
-                        //SimpleIoc.Default.GetInstance<TextViewViewModel>();
+                        
                         TextViewViewModel textViewViewModel = SimpleIoc.Default.GetInstance<TextViewViewModel>();
                         textViewViewModel.TextContent = rawContent;
                         
                         CurrentContentView = textViewViewModel;
+                        IsRequesting = false;
+
                     }
                     catch (OperationCanceledException)
                     {
@@ -276,14 +286,17 @@ namespace GopherClient.ViewModel
                 // Image
                 case "g":
                 case "I":
-                    // TODO: Bug current site not added to history
+                    // TODO Bug current site not added to history
+                    // TODO Add cancellation
                     ImageViewViewModel imageViewViewModel = SimpleIoc.Default.GetInstance<ImageViewViewModel>();
                     imageViewViewModel.ImageSource = client.GetImage(gopherLine);
                     CurrentContentView = imageViewViewModel;
                     break;
                 default:
+                    IsRequesting = false;
                     return;
             }
+            IsRequesting = false;
         }
 
         private void ResetProgressBar()
