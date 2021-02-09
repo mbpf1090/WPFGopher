@@ -61,13 +61,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ToggleButton Content="&#xf85b;"
-                          Width="40"
-                          Height="40"
                           Grid.Column="0"
                           IsChecked="False"
-                          Background="{StaticResource MainBG}"
-                          Foreground="{StaticResource MainFG}"
-                          FontFamily="{StaticResource MonoidRegular}"
                           Style="{DynamicResource ToggleButtonStyle}">
                 <ToggleButton.Triggers>
                     <EventTrigger RoutedEvent="ToggleButton.Unchecked">

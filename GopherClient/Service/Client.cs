@@ -189,7 +189,7 @@ namespace GopherClient.Service
             }
             else
             {
-                rawContent = Visit(destination);
+                rawContent = await Task.Run(() => Visit(destination));
                 cache.Add(destination, rawContent);
             }
 

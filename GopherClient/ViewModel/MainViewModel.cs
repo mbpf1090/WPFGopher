@@ -105,7 +105,7 @@ namespace GopherClient.ViewModel
         }
 
         #region Methods
-        private void Navigate(string menuItem)
+        private async void Navigate(string menuItem)
         {
             switch (menuItem)
             {
@@ -123,7 +123,7 @@ namespace GopherClient.ViewModel
                             db.Insert(b);
                         }
                         BookmarksViewModel bmVM = SimpleIoc.Default.GetInstance<BookmarksViewModel>();
-                        bmVM.UpdateBookmarksList();
+                        await bmVM.UpdateBookmarksList();
                     }
                     break;
                 default:
