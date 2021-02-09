@@ -15,8 +15,6 @@ namespace GopherClient.Service
 {
     public class Client
     {
-        // TODO REMOVE
-        private int i = 0;
 
         private Stack<GopherLine> stack;
         private Dictionary<GopherLine, string> cache;
@@ -78,8 +76,6 @@ namespace GopherClient.Service
 
         public string Visit(GopherLine gopherLine)
         {
-            i++;
-            Debug.WriteLine(i);
             StringBuilder sb = new StringBuilder();
             int length;
             TcpClient client = new TcpClient();
@@ -114,71 +110,6 @@ namespace GopherClient.Service
             return sb.ToString();
         }
 
-        /*
-        private async Task<string> VisitAsync(GopherLine gopherLine)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            if (getDataTask?.Status == TaskStatus.Running)
-            {
-                tokenSource.Cancel();
-            }
-
-            tokenSource = new CancellationTokenSource();
-            // Timeout after 5 sec
-            //tokenSource.CancelAfter(5000);
-            cancellationToken = tokenSource.Token;
-
-            
-
-            getDataTask = Task.Run(() => { 
-                int length;
-                TcpClient client = new TcpClient();
-
-                data = Encoding.UTF8.GetBytes($"{gopherLine.Selector}\n\r");
-
-                try
-                {
-                    client.Connect(gopherLine.Host, int.Parse(gopherLine.Port));
-                    
-                    NetworkStream stream = client.GetStream();
-
-                    stream.Write(data, 0, data.Length);
-
-                    do
-                    {
-                        data = new byte[4096];
-                        length = stream.Read(data, 0, data.Length);
-                        string responseData = Encoding.UTF8.GetString(data, 0, length);
-                        sb.Append(responseData);
-                    } while (length > 0);
-                }
-                catch (SocketException)
-                {
-                    sb.Append("iServer timed out...\t \t \t ");
-                }
-                finally
-                {
-                    client.Close();
-                }
-            }, cancellationToken);
-
-
-
-            try
-            {
-                await getDataTask;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Cancelled");
-                throw new OperationCanceledException();
-            }
-
-
-            return sb.ToString();
-        }
-        */
         public async Task<string> GetTextContentAsync(GopherLine destination)
         {
             string rawContent;
@@ -207,7 +138,6 @@ namespace GopherClient.Service
 
             if (cache.ContainsKey(destination))
             {
-                // TODO Fix cache error with hash function on gopherline
                 rawContent = cache[destination];
             }
             else
