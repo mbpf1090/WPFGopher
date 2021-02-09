@@ -129,18 +129,31 @@
                     Width="0"
                     BorderThickness="1"
                     BorderBrush="{StaticResource MainFG}">
-                <StackPanel>
-                    <Button Content="B"
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <!-- Menu -->
+                    <StackPanel Grid.Row="0">
+                        <Button Content="B"
+                                HorizontalAlignment="Center"
+                                Command="{Binding NavCmd}"
+                                CommandParameter="bookmarks"
+                                Style="{StaticResource AddressBarBtn}"/>
+                        <Button Content="&#xf914;"
+                                HorizontalAlignment="Center"
+                                Command="{Binding NavCmd}"
+                                CommandParameter="addbookmark"
+                                Style="{StaticResource AddressBarBtn}"/>
+                    </StackPanel>
+                    <!-- Exit -->
+                    <Button Grid.Row="1"
                             HorizontalAlignment="Center"
-                            Command="{Binding NavCmd}"
-                            CommandParameter="bookmarks"
-                            Style="{StaticResource AddressBarBtn}"/>
-                    <Button Content="&#xf914;"
-                            HorizontalAlignment="Center"
-                            Command="{Binding NavCmd}"
-                            CommandParameter="addbookmark"
-                            Style="{StaticResource AddressBarBtn}"/>
-                </StackPanel>
+                            Style="{StaticResource AddressBarBtn}"
+                            Content="&#xf00d;"
+                            Command="{Binding QuitCmd}"/>
+                </Grid>
             </Border>
 
 

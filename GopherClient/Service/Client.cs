@@ -16,8 +16,8 @@ namespace GopherClient.Service
     public class Client
     {
 
-        private Stack<GopherLine> stack;
-        private Dictionary<GopherLine, string> cache;
+        private readonly Stack<GopherLine> stack;
+        private readonly Dictionary<GopherLine, string> cache;
         private byte[] data;
 
         private Task<string> getDataTask;

@@ -74,6 +74,7 @@ namespace GopherClient.ViewModel
         public RelayCommand OpenAddressCmd { get; set; }
         public RelayCommand GoBackCmd { get; set; }
         public RelayCommand<string> NavCmd { get; set; }
+        public RelayCommand QuitCmd { get; set; }
         #endregion
 
         public MainViewModel()
@@ -93,6 +94,7 @@ namespace GopherClient.ViewModel
             OpenAddressCmd = new RelayCommand(OpenAddress, CanOpenAddress);
             GoBackCmd = new RelayCommand(GoBack, client.CanGoBack);
             NavCmd = new RelayCommand<string>(Navigate);
+            QuitCmd = new RelayCommand(() => { App.Current.Shutdown(); });
 
             Address = "gopher.floodgap.com";
             IsRequesting = false;
