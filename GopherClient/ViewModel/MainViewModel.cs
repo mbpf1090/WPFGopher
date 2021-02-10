@@ -65,6 +65,17 @@ namespace GopherClient.ViewModel
             }
         }
 
+        private double _gridOpacity;
+        public double GridOpacity 
+        {
+            get => _gridOpacity;
+            set
+            {
+                _gridOpacity = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public GopherLine CurrentLine { get; set; }
         public bool IsRequesting { get; set; }
         public CancellationTokenSource TokenSource { get; set; }
@@ -89,6 +100,7 @@ namespace GopherClient.ViewModel
             }
 
             CurrentContentView = SimpleIoc.Default.GetInstance<MenuViewViewModel>();
+            GridOpacity = 1;
 
             // Commands
             OpenAddressCmd = new RelayCommand(OpenAddress, CanOpenAddress);
@@ -141,7 +153,6 @@ namespace GopherClient.ViewModel
 
         private async void GetSearchTerm(string s)
         {
-            Debug.WriteLine(s);
             searchLine.Selector += $"\t{s}";
             try
             {
@@ -275,7 +286,10 @@ namespace GopherClient.ViewModel
                     {
                         Owner = App.Current.MainWindow
                     };
+
+                    GridOpacity = 0.2;
                     searchWindow.ShowDialog();
+                    GridOpacity = 1;
                     break;
                 // HTML link
                 case "h":

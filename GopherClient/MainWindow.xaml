@@ -12,8 +12,9 @@
         Title="MainWindow" Height="450" Width="800"
         Background="#222525"
         WindowStyle="None"
-        WindowStartupLocation="CenterScreen"
-        >
+        Opacity="20"
+        WindowStartupLocation="CenterScreen">
+    
     <Window.Resources>
         <converter:TypeToSymbolConverter x:Key="TypeToSymbol"/>
 
@@ -33,7 +34,7 @@
         <WindowChrome CaptionHeight="10"/>
     </WindowChrome.WindowChrome>
 
-    <Grid>
+    <Grid Opacity="{Binding GridOpacity}">
         <!--Custom Caret https://www.codeproject.com/Articles/633935/Customizing-the-Caret-of-a-WPF-TextBox -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
