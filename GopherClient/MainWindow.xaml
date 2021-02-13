@@ -23,7 +23,6 @@
             <Setter Property="FontFamily" Value="{StaticResource MonoidRegular}" />
             <Setter Property="FontSize" Value="16"/>
         </Style>
-        
     </Window.Resources>
 
     <Window.DataContext>
@@ -113,7 +112,10 @@
                        Grid.Column="1"
                        Stroke="#FFAF00" 
                        Height="1" 
-                       Width="{Binding ActualWidth, ElementName=addressBarTextbox}"/>
+                       Width="{Binding ActualWidth, ElementName=addressBarTextbox}"
+                       x:Name="borderBottom">
+
+            </Rectangle>
         </Grid>
 
         <!-- Main Area Grid -->
@@ -195,7 +197,7 @@
                              BorderBrush="{StaticResource MainFG}"
                              BorderThickness="1"
                              Opacity="0.7"
-                             Value="{Binding Progress}"/>
+                             IsIndeterminate="{Binding IsRequesting}"/>
             </Grid>
         </Border>
     </Grid>
