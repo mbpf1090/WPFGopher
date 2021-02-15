@@ -102,6 +102,10 @@ namespace GopherClient.Service
             {
                 sb.Append("iServer timed out...\t \t \t ");
             }
+            catch (ArgumentOutOfRangeException)
+            {
+                return string.Empty;
+            }
             finally
             {
                 client.Close();

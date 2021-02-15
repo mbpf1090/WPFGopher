@@ -225,7 +225,15 @@ namespace GopherClient.ViewModel
                     try
                     {
                         IsRequesting = true;
-                        var rawContent = await client.GetMenuContentAsync(gopherLine, TokenSource.Token);
+                        var getMenuTask = client.GetMenuContentAsync(gopherLine, TokenSource.Token);
+                        var rawContent = await getMenuTask;
+
+                        if (!getMenuTask.IsCompleted)
+                        {
+                            IsRequesting = false;
+                            return;
+                        }
+
                         Address = client.currentSite.Host + client.currentSite.Selector;
                         try
                         {
